@@ -1,0 +1,74 @@
+#!/bin/bash
+# ~/.macos — run with: bash ~/.macos
+
+echo "Applying macOS defaults..."
+
+###############################################################################
+# Dock & Mission Control
+###############################################################################
+
+# Auto-hide the Dock
+defaults write com.apple.dock autohide -bool true
+
+# Remove the auto-hide delay
+defaults write com.apple.dock autohide-delay -float 0
+defaults write com.apple.dock autohide-time-modifier -float 0.3
+
+# Use scale effect for minimizing (faster than genie)
+defaults write com.apple.dock mineffect -string "scale"
+
+# Don't show recent applications in Dock
+defaults write com.apple.dock show-recents -bool false
+
+# Don't rearrange Spaces based on most recent use
+defaults write com.apple.dock mru-spaces -bool false
+
+# Group windows by application in Mission Control
+defaults write com.apple.dock expose-group-apps -bool true
+
+# Speed up Mission Control animation
+defaults write com.apple.dock expose-animation-duration -float 0.15
+
+###############################################################################
+# Finder
+###############################################################################
+
+# Show all file extensions
+defaults write NSGlobalDomain AppleShowAllExtensions -bool true
+
+# Show hidden files
+defaults write com.apple.finder AppleShowAllFiles -bool true
+
+# Show path bar at bottom
+defaults write com.apple.finder ShowPathbar -bool true
+
+# Show status bar at bottom
+defaults write com.apple.finder ShowStatusBar -bool true
+
+# Show full POSIX path in Finder title bar
+defaults write com.apple.finder _FXShowPosixPathInTitle -bool true
+
+# Disable the warning when changing a file extension
+defaults write com.apple.finder FXEnableExtensionChangeWarning -bool false
+
+# Keep folders on top when sorting by name
+defaults write com.apple.finder _FXSortFoldersFirst -bool true
+
+# Default to column view
+defaults write com.apple.finder FXPreferredViewStyle -string "clmv"
+
+# Search current folder by default (not whole Mac)
+defaults write com.apple.finder FXDefaultSearchScope -string "SCcf"
+
+# Avoid creating .DS_Store files on network or USB volumes
+defaults write com.apple.desktopservices DSDontWriteNetworkStores -bool true
+defaults write com.apple.desktopservices DSDontWriteUSBStores -bool true
+
+###############################################################################
+# Apply
+###############################################################################
+
+killall Dock Finder 2>/dev/null
+
+echo "Done. Some changes may require a logout to take effect."
+
