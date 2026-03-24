@@ -1,0 +1,44 @@
+// Zed settings
+//
+// For information on how to configure Zed, see the Zed
+// documentation: https://zed.dev/docs/configuring-zed
+//
+// To see all of Zed's default settings without changing your
+// custom settings, run `zed: open default settings` from the
+// command palette
+{
+  "edit_predictions": {
+    "provider": "none",
+  },
+  "ui_font_size": 16,
+  "buffer_font_size": 16,
+  "theme": {
+    "mode": "system",
+    "light": "One Light",
+    "dark": "Tokyo Night",
+  },
+  "buffer_font_family": "JetBrains Mono",
+  "terminal": {
+    "font_family": "JetBrainsMono Nerd Font",
+  },
+  "file_types": {
+    "Tera (CSS)": ["*.css.tera"],
+    "Tera (HTML)": ["*.html.tera"],
+    "Tera (JSON)": ["*.json.tera"],
+    "Tera (TOML)": ["*.toml.tera"],
+    "Tera (YAML)": ["*.yaml.tera"],
+  },
+  "lsp": {
+    "rust-analyzer": {
+      "binary": {
+        "path": "/Users/rhgrieve/.rustup/toolchains/stable-aarch64-apple-darwin/bin/rust-analyzer",
+        "ignore_system_version": true,
+      },
+      "initialization_options": {
+        "check": {
+          "command": "clippy",
+        },
+      },
+    },
+  },
+}
