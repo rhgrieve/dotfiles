@@ -1,0 +1,36 @@
+[user]
+	name = Harrison Grieve
+	email = rhg@alkmi.io
+[core]
+	pager = delta
+	excludesfile = ~/.gitignore_global
+[interactive]
+	diffFilter = delta --color-only
+[merge]
+	conflictstyle = zdiff3
+[rebase]
+	autosquash = true
+	autostash = true
+[commit]
+	verbose = true
+[diff]
+	colorMoved = true
+	algorithm = histogram
+[grep]
+	patternType = perl
+[feature]
+	experimental = true
+[branch]
+	sort = committerdate
+[column]
+	ui = auto
+[init]
+	defaultBranch = main
+[push]
+	autoSetupRemote = true
+	followTags = true
+[delta]
+	navigate = true
+	dark = true
+[alias]
+	lg = log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --branches
