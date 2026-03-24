@@ -1,0 +1,90 @@
+# ~/.gitignore_global
+
+###############################################################################
+# macOS
+###############################################################################
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+.Spotlight-V100
+.Trashes
+
+###############################################################################
+# Editors
+###############################################################################
+
+# Vim / Neovim
+*.swp
+*.swo
+.netrwhist
+Session.vim
+
+# VSCode / Cursor / Windsurf
+.vscode/
+.cursor/
+.windsurf/
+
+# Zed
+.zed/
+
+# JetBrains
+.idea/
+
+###############################################################################
+# Languages & Runtimes
+###############################################################################
+
+# Node
+node_modules/
+.npm
+.pnpm-debug.log
+.yarn/cache
+
+# Rust
+target/
+Cargo.lock   # only for libraries — remove this line if you want to track it in apps
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+.env
+*.egg-info/
+
+# Go
+vendor/
+*.test
+
+# Ruby
+.bundle/
+vendor/bundle/
+
+###############################################################################
+# Build & tooling artifacts
+###############################################################################
+dist/
+build/
+out/
+.cache/
+*.log
+*.lock    # be selective — you may want specific lockfiles tracked per-project
+
+###############################################################################
+# Environment & secrets
+###############################################################################
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.cert
+
+###############################################################################
+# Misc
+###############################################################################
+*.orig
+*.bak
+.direnv/
+.tool-versions
+
