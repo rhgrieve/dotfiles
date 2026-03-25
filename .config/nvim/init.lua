@@ -122,3 +122,5 @@ require('lualine').setup()
 vim.opt.termguicolors = true
 vim.wo.number = true
 vim.cmd('colorscheme tokyonight')
+vim.o.exrc = true
+
