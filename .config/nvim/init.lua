@@ -16,12 +16,11 @@ end
 
 vim.opt.rtp:prepend(lazypath)
 
+vim.g.mapleader = ' '
+
 -- lazy initialization
 require('lazy').setup({
   {'folke/tokyonight.nvim'},
-  {'VonHeikemen/lsp-zero.nvim', 
-    branch = 'v4.x'
-  },
   {'neovim/nvim-lspconfig'},
   {'hrsh7th/cmp-nvim-lsp'},
   {'hrsh7th/nvim-cmp'},
@@ -38,7 +37,14 @@ require('lazy').setup({
       {'nvim-tree/nvim-web-devicons'},
     }
   },
-  {'nvim-treesitter/nvim-treesitter', build = ':TSUpdate' },
+  {
+    'nvim-treesitter/nvim-treesitter',
+    build = ':TSUpdate',
+    opts = {
+      ensure_installed = { 'lua', 'rust', 'javascript', 'typescript', 'astro', 'css', 'html', 'markdown', 'json', 'yaml', 'toml' },
+      highlight = { enable = true },
+    },
+  },
   {
     'nvim-lualine/lualine.nvim',
     dependencies = {
@@ -46,39 +52,42 @@ require('lazy').setup({
     },
   },
   {
-    'nvim-telescope/telescope.nvim', tag = '0.1.8'
+    'renerocksai/telekasten.nvim',
+    dependencies = {
+      {'nvim-telescope/telescope.nvim'},
+      {'nvim-telekasten/calendar-vim'},
+    },
+  },
+  {
+    'nvim-telescope/telescope.nvim',
+    dependencies = {
+      {'nvim-lua/plenary.nvim'},
+    },
   },
 })
 
--- lsp-zero config
-local lsp_zero = require('lsp-zero')
+-- lsp config (native vim.lsp.config, nvim 0.11+)
+vim.api.nvim_create_autocmd('LspAttach', {
+  callback = function(event)
+    local opts = {buffer = event.buf}
 
-local lsp_attach = function(client, bufnr)
-  local opts = {buffer = bufnr}
+    -- K (hover), grn (rename), grr (references), gra (code action),
+    -- gri (implementation) are built-in defaults in 0.11+
+    vim.keymap.set('n', 'gd', '<cmd>lua vim.lsp.buf.definition()<cr>', opts)
+    vim.keymap.set('n', 'gD', '<cmd>lua vim.lsp.buf.declaration()<cr>', opts)
+    vim.keymap.set('n', 'go', '<cmd>lua vim.lsp.buf.type_definition()<cr>', opts)
+    vim.keymap.set('n', 'gs', '<cmd>lua vim.lsp.buf.signature_help()<cr>', opts)
+    vim.keymap.set({'n', 'x'}, '<F3>', '<cmd>lua vim.lsp.buf.format({async = true})<cr>', opts)
+  end,
+})
 
-  vim.keymap.set('n', 'K', '<cmd>lua vim.lsp.buf.hover()<cr>', opts)
-  vim.keymap.set('n', 'gd', '<cmd>lua vim.lsp.buf.definition()<cr>', opts)
-  vim.keymap.set('n', 'gD', '<cmd>lua vim.lsp.buf.declaration()<cr>', opts)
-  vim.keymap.set('n', 'gi', '<cmd>lua vim.lsp.buf.implementation()<cr>', opts)
-  vim.keymap.set('n', 'go', '<cmd>lua vim.lsp.buf.type_definition()<cr>', opts)
-  vim.keymap.set('n', 'gr', '<cmd>lua vim.lsp.buf.references()<cr>', opts)
-  vim.keymap.set('n', 'gs', '<cmd>lua vim.lsp.buf.signature_help()<cr>', opts)
-  vim.keymap.set('n', '<F2>', '<cmd>lua vim.lsp.buf.rename()<cr>', opts)
-  vim.keymap.set({'n', 'x'}, '<F3>', '<cmd>lua vim.lsp.buf.format({async = true})<cr>', opts)
-  vim.keymap.set('n', '<F4>', '<cmd>lua vim.lsp.buf.code_action()<cr>', opts)
-end
-
-lsp_zero.extend_lspconfig({
-  sign_text = true,
-  lsp_attach = lsp_attach,
+vim.lsp.config('*', {
   capabilities = require('cmp_nvim_lsp').default_capabilities(),
 })
 
-require('lspconfig').lua_ls.setup({})
-require('lspconfig').rust_analyzer.setup({})
+vim.lsp.enable({'lua_ls', 'rust_analyzer'})
 
 local cmp = require('cmp')
-local cmp_action = lsp_zero.cmp_action()
 
 cmp.setup({
   sources = {
@@ -92,8 +101,12 @@ cmp.setup({
     ['<C-Space>'] = cmp.mapping.complete(),
 
     -- Navigate between snippet placeholder
-    ['<C-f>'] = cmp_action.vim_snippet_jump_forward(),
-    ['<C-b>'] = cmp_action.vim_snippet_jump_backward(),
+    ['<C-f>'] = cmp.mapping(function()
+      if vim.snippet.active({direction = 1}) then vim.snippet.jump(1) end
+    end, {'i', 's'}),
+    ['<C-b>'] = cmp.mapping(function()
+      if vim.snippet.active({direction = -1}) then vim.snippet.jump(-1) end
+    end, {'i', 's'}),
 
     -- Scroll up and down in the completion documentation
     ['<C-u>'] = cmp.mapping.scroll_docs(-4),
@@ -114,12 +127,32 @@ vim.keymap.set('n', '<leader>fg', builtin.live_grep, {})
 vim.keymap.set('n', '<leader>fb', builtin.buffers, {})
 vim.keymap.set('n', '<leader>fh', builtin.help_tags, {})
 
+require('telekasten').setup({
+  home = vim.fn.expand("~/Notes"),
+})
+
+-- Launch panel if nothing is typed after <leader>z
+vim.keymap.set("n", "<leader>z", "<cmd>Telekasten panel<CR>")
+
+-- Most used functions
+vim.keymap.set("n", "<leader>zf", "<cmd>Telekasten find_notes<CR>")
+vim.keymap.set("n", "<leader>zg", "<cmd>Telekasten search_notes<CR>")
+vim.keymap.set("n", "<leader>zd", "<cmd>Telekasten goto_today<CR>")
+vim.keymap.set("n", "<leader>zz", "<cmd>Telekasten follow_link<CR>")
+vim.keymap.set("n", "<leader>zn", "<cmd>Telekasten new_note<CR>")
+vim.keymap.set("n", "<leader>zc", "<cmd>Telekasten show_calendar<CR>")
+vim.keymap.set("n", "<leader>zb", "<cmd>Telekasten show_backlinks<CR>")
+vim.keymap.set("n", "<leader>zI", "<cmd>Telekasten insert_img_link<CR>")
+
+-- Call insert link automatically when we start typing a link
+vim.keymap.set("i", "[[", "<cmd>Telekasten insert_link<CR>")
+
 require('nvim-tree').setup()
-require('nvim-treesitter').setup()
 require('lualine').setup()
 
+vim.keymap.set('n', '<leader>e', '<cmd>NvimTreeToggle<cr>')
+
 -- vim settings
-vim.opt.termguicolors = true
 vim.wo.number = true
 vim.cmd('colorscheme tokyonight')
 vim.o.exrc = true
